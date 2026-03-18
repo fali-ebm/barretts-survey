@@ -85,9 +85,9 @@
   .calc-toggle-btn .arrow { font-size: 10px; transition: transform 0.2s; }
   .calcs-hidden .calc-toggle-btn .arrow { transform: rotate(-90deg); }
   .outcomes-table tr.egds-row td { background: #f3eeff; padding: 10px 12px; }
-  .outcomes-table tr.egds-row td.col-label {
-    background: #f3eeff; font-weight: 700; color: #4a1d96; font-size: 12px;
-  }
+  .outcomes-table tr.egds-row td.col-label { background: #f3eeff; font-weight: 700; color: #4a1d96; font-size: 12px; }
+  .outcomes-table tr.egds-row td.col-control { background: #f3eeff; }
+  .outcomes-table tr.egds-row td.col-intervention { background: #f3eeff; }
   .egds-formula { font-family: "Courier New", monospace; font-size: 11px; color: #6b48c4; }
   .egds-result { font-weight: 700; font-size: 13px; color: #4a1d96; }
   .question-prompt { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; }
@@ -488,15 +488,15 @@ function buildScenarioPages() {
             <tr class="section-divider"><td colspan="3">Level 2 — patient outcomes over 10 years</td></tr>
             <tr>
               <td class="col-label">Progress to esophageal cancer (EAC)</td>
-              <td class="col-control">${s.eac_u} develop EAC — all detected at advanced stage when symptomatic</td>
-              <td class="col-intervention">${s.eac_d} EAC from detected Barrett's (early stage) · ${s.eac_m} EAC from missed Barrett's (advanced stage)</td>
+              <td class="col-control">${s.eac_u} develop EAC</td>
+              <td class="col-intervention">${s.eac_d} EAC from detected Barrett's · ${s.eac_m} EAC from missed Barrett's</td>
             </tr>
             <tr class="calc-row">
               <td class="col-label">calculation</td>
               <td>${s.calc_eac_u}</td>
               <td>${s.calc_eac_d} · ${s.calc_eac_m}</td>
             </tr>
-            <tr>
+            <tr class="egds-row">
               <td class="col-label">Deaths from esophageal cancer</td>
               <td class="col-control">${s.d_u} die from EAC over 10 years</td>
               <td class="col-intervention">${s.d_d} die from detected arm · ${s.d_m} die from missed arm · <b>${s.d_s} total deaths</b> in screened arm</td>
@@ -506,7 +506,7 @@ function buildScenarioPages() {
               <td>${s.calc_d_u}</td>
               <td>${s.calc_d_d} · ${s.calc_d_m} · total = ${s.d_d+s.d_m}</td>
             </tr>
-            <tr>
+            <tr class="egds-row">
               <td class="col-label">Deaths averted by screening</td>
               <td class="col-control">—</td>
               <td class="col-intervention"><b>${s.averted} deaths averted</b> — mortality benefit of screening at this prevalence (${s.d_u} → ${s.d_s})</td>
@@ -516,10 +516,15 @@ function buildScenarioPages() {
               <td>—</td>
               <td>${s.calc_av}</td>
             </tr>
-            <tr>
+            <tr class="egds-row">
               <td class="col-label">Total endoscopies — screened arm</td>
               <td class="col-control">Not counted</td>
-              <td class="col-intervention">(${s.be_det.toLocaleString()} × 4) + (${s.egds_non.toLocaleString()} × 1) = ${s.egds_det.toLocaleString()} + ${s.egds_non.toLocaleString()} = <b>${s.egds_total} endoscopies</b></td>
+              <td class="col-intervention"><b>${s.egds_total} endoscopies</b> over 10 years</td>
+            </tr>
+            <tr class="calc-row">
+              <td class="col-label">calculation</td>
+              <td>—</td>
+              <td>(${s.be_det.toLocaleString()} × 4) + (${s.egds_non.toLocaleString()} × 1) = ${s.egds_det.toLocaleString()} + ${s.egds_non.toLocaleString()}</td>
             </tr>
             <tr class="egds-row">
               <td class="col-label">EGDs per death averted</td>
