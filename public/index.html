@@ -67,11 +67,23 @@
   .outcomes-table tr.calc-row td {
     background: #fafafa; font-family: "Courier New", monospace;
     font-size: 11px; color: #777; padding: 4px 12px;
+    transition: all 0.2s;
   }
   .outcomes-table tr.calc-row td.col-label {
     font-family: -apple-system, Arial, sans-serif; font-size: 11px;
     font-weight: 500; color: #aaa; background: #fafafa;
   }
+  .outcomes-table tr.calc-row { transition: opacity 0.2s; }
+  .table-container.calcs-hidden tr.calc-row { display: none; }
+  .calc-toggle-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: none; border: 1px solid #c8d4e0; border-radius: 6px;
+    padding: 5px 12px; font-size: 12px; color: #6b7f93; cursor: pointer;
+    font-family: inherit; margin-bottom: 12px; transition: all 0.15s;
+  }
+  .calc-toggle-btn:hover { border-color: #2a7abf; color: #2a7abf; background: #f0f7ff; }
+  .calc-toggle-btn .arrow { font-size: 10px; transition: transform 0.2s; }
+  .calcs-hidden .calc-toggle-btn .arrow { transform: rotate(-90deg); }
   .outcomes-table tr.egds-row td { background: #f3eeff; padding: 10px 12px; }
   .outcomes-table tr.egds-row td.col-label {
     background: #f3eeff; font-weight: 700; color: #4a1d96; font-size: 12px;
@@ -209,7 +221,7 @@
 
   <!-- PAGE 1: INTRO -->
   <div class="page active" id="page-1">
-    <div class="page-indicator">Page 1 of 7</div>
+    <div class="page-indicator">Page 1 of 8</div>
     <div class="card">
       <div class="card-title">Welcome</div>
       <div class="intro-text">
@@ -225,7 +237,7 @@
 
   <!-- PAGE 2: ABOUT YOU -->
   <div class="page" id="page-2">
-    <div class="page-indicator">Page 2 of 7</div>
+    <div class="page-indicator">Page 2 of 8</div>
     <div class="card">
       <div class="card-title">About you</div>
       <div class="form-group">
@@ -269,7 +281,7 @@
 
   <!-- PAGE 3: CASE STUDY -->
   <div class="page" id="page-3">
-    <div class="page-indicator">Page 3 of 7</div>
+    <div class="page-indicator">Page 3 of 8</div>
     <div class="card">
       <div class="card-title">Case study</div>
       <div class="intro-text">
@@ -358,7 +370,7 @@
 </div>
 
 <script>
-const TOTAL_PAGES = 7;
+const TOTAL_PAGES = 8;
 const answers = {};
 let adminPinValue = '';
 
@@ -371,26 +383,26 @@ const labelMap = {
 
 const scenarios = [
   {
-    prev:"2%", num:1, page:4,
-    be_total:200, be_det:180, be_miss:20,
-    eac_u:12, eac_d:11, eac_m:1,
-    d_u:7, d_d:4, d_m:1, d_s:5, averted:2,
-    egds_det:720, egds_non:9820, egds_total:"10,540", egds_pd:"4,557",
-    calc_eac_u:"200 × 0.0584 = 11.7 ≈ 12", calc_eac_d:"180 × 0.0584 = 10.5 ≈ 11", calc_eac_m:"20 × 0.0584 = 1.2 ≈ 1",
-    calc_d_u:"11.7 × 0.578 = 6.8 ≈ 7",   calc_d_d:"10.5 × 0.358 = 3.8 ≈ 4",   calc_d_m:"1.2 × 0.578 = 0.7 ≈ 1",
-    calc_av:"6.8 − 4.4 = 2.3 ≈ 2",
-    formula:"[10,000 + (180×3)] ÷ [180 × 0.0584 × 0.220] = 10,540 ÷ 2.31"
+    prev:"15%", num:1, page:4,
+    be_total:1500, be_det:1350, be_miss:150,
+    eac_u:88, eac_d:79, eac_m:9,
+    d_u:51, d_d:28, d_m:5, d_s:33, averted:17,
+    egds_det:5400, egds_non:8650, egds_total:"14,050", egds_pd:"810",
+    calc_eac_u:"1,500 × 0.0584 = 87.6 ≈ 88", calc_eac_d:"1,350 × 0.0584 = 78.8 ≈ 79", calc_eac_m:"150 × 0.0584 = 8.8 ≈ 9",
+    calc_d_u:"87.6 × 0.578 = 50.6 ≈ 51",    calc_d_d:"78.8 × 0.358 = 28.2 ≈ 28",    calc_d_m:"8.8 × 0.578 = 5.1 ≈ 5",
+    calc_av:"50.6 − 33.3 = 17.3 ≈ 17",
+    formula:"[10,000 + (1,350×3)] ÷ [1,350 × 0.0584 × 0.220] = 14,050 ÷ 17.35"
   },
   {
-    prev:"5%", num:2, page:5,
-    be_total:500, be_det:450, be_miss:50,
-    eac_u:29, eac_d:26, eac_m:3,
-    d_u:17, d_d:9, d_m:2, d_s:11, averted:6,
-    egds_det:1800, egds_non:9550, egds_total:"11,350", egds_pd:"1,963",
-    calc_eac_u:"500 × 0.0584 = 29.2 ≈ 29", calc_eac_d:"450 × 0.0584 = 26.3 ≈ 26", calc_eac_m:"50 × 0.0584 = 2.9 ≈ 3",
-    calc_d_u:"29.2 × 0.578 = 16.9 ≈ 17",  calc_d_d:"26.3 × 0.358 = 9.4 ≈ 9",   calc_d_m:"2.9 × 0.578 = 1.7 ≈ 2",
-    calc_av:"16.9 − 11.1 = 5.8 ≈ 6",
-    formula:"[10,000 + (450×3)] ÷ [450 × 0.0584 × 0.220] = 11,350 ÷ 5.78"
+    prev:"10%", num:2, page:5,
+    be_total:1000, be_det:900, be_miss:100,
+    eac_u:58, eac_d:53, eac_m:6,
+    d_u:34, d_d:19, d_m:3, d_s:22, averted:12,
+    egds_det:3600, egds_non:9100, egds_total:"12,700", egds_pd:"1,098",
+    calc_eac_u:"1,000 × 0.0584 = 58.4 ≈ 58", calc_eac_d:"900 × 0.0584 = 52.6 ≈ 53", calc_eac_m:"100 × 0.0584 = 5.8 ≈ 6",
+    calc_d_u:"58.4 × 0.578 = 33.8 ≈ 34",    calc_d_d:"52.6 × 0.358 = 18.8 ≈ 19",   calc_d_m:"5.8 × 0.578 = 3.4 ≈ 3",
+    calc_av:"33.8 − 22.2 = 11.6 ≈ 12",
+    formula:"[10,000 + (900×3)] ÷ [900 × 0.0584 × 0.220] = 12,700 ÷ 11.56"
   },
   {
     prev:"7%", num:3, page:6,
@@ -404,17 +416,41 @@ const scenarios = [
     formula:"[10,000 + (630×3)] ÷ [630 × 0.0584 × 0.220] = 11,890 ÷ 8.10"
   },
   {
-    prev:"10%", num:4, page:7,
-    be_total:1000, be_det:900, be_miss:100,
-    eac_u:58, eac_d:53, eac_m:6,
-    d_u:34, d_d:19, d_m:3, d_s:22, averted:12,
-    egds_det:3600, egds_non:9100, egds_total:"12,700", egds_pd:"1,098",
-    calc_eac_u:"1,000 × 0.0584 = 58.4 ≈ 58", calc_eac_d:"900 × 0.0584 = 52.6 ≈ 53", calc_eac_m:"100 × 0.0584 = 5.8 ≈ 6",
-    calc_d_u:"58.4 × 0.578 = 33.8 ≈ 34",    calc_d_d:"52.6 × 0.358 = 18.8 ≈ 19",   calc_d_m:"5.8 × 0.578 = 3.4 ≈ 3",
-    calc_av:"33.8 − 22.2 = 11.6 ≈ 12",
-    formula:"[10,000 + (900×3)] ÷ [900 × 0.0584 × 0.220] = 12,700 ÷ 11.56"
+    prev:"5%", num:4, page:7,
+    be_total:500, be_det:450, be_miss:50,
+    eac_u:29, eac_d:26, eac_m:3,
+    d_u:17, d_d:9, d_m:2, d_s:11, averted:6,
+    egds_det:1800, egds_non:9550, egds_total:"11,350", egds_pd:"1,963",
+    calc_eac_u:"500 × 0.0584 = 29.2 ≈ 29", calc_eac_d:"450 × 0.0584 = 26.3 ≈ 26", calc_eac_m:"50 × 0.0584 = 2.9 ≈ 3",
+    calc_d_u:"29.2 × 0.578 = 16.9 ≈ 17",  calc_d_d:"26.3 × 0.358 = 9.4 ≈ 9",   calc_d_m:"2.9 × 0.578 = 1.7 ≈ 2",
+    calc_av:"16.9 − 11.1 = 5.8 ≈ 6",
+    formula:"[10,000 + (450×3)] ÷ [450 × 0.0584 × 0.220] = 11,350 ÷ 5.78"
+  },
+  {
+    prev:"2%", num:5, page:8,
+    be_total:200, be_det:180, be_miss:20,
+    eac_u:12, eac_d:11, eac_m:1,
+    d_u:7, d_d:4, d_m:1, d_s:5, averted:2,
+    egds_det:720, egds_non:9820, egds_total:"10,540", egds_pd:"4,557",
+    calc_eac_u:"200 × 0.0584 = 11.7 ≈ 12", calc_eac_d:"180 × 0.0584 = 10.5 ≈ 11", calc_eac_m:"20 × 0.0584 = 1.2 ≈ 1",
+    calc_d_u:"11.7 × 0.578 = 6.8 ≈ 7",   calc_d_d:"10.5 × 0.358 = 3.8 ≈ 4",   calc_d_m:"1.2 × 0.578 = 0.7 ≈ 1",
+    calc_av:"6.8 − 4.4 = 2.3 ≈ 2",
+    formula:"[10,000 + (180×3)] ÷ [180 × 0.0584 × 0.220] = 10,540 ÷ 2.31"
   }
 ];
+
+// ── CALC TOGGLE ───────────────────────────────────────────────────────────────
+function toggleCalcs(btn) {
+  const tableContainer = btn.nextElementSibling;
+  const isHidden = tableContainer.classList.contains('calcs-hidden');
+  if (isHidden) {
+    tableContainer.classList.remove('calcs-hidden');
+    btn.innerHTML = '<span class="arrow">&#9660;</span> Hide calculations';
+  } else {
+    tableContainer.classList.add('calcs-hidden');
+    btn.innerHTML = '<span class="arrow" style="display:inline-block;transform:rotate(-90deg)">&#9660;</span> Show calculations';
+  }
+}
 
 // ── BUILD SCENARIO PAGES ──────────────────────────────────────────────────────
 function buildScenarioPages() {
@@ -436,6 +472,10 @@ function buildScenarioPages() {
       <div class="card">
         <div class="scenario-label">Scenario ${s.num} — out of 10,000 people like Mr. Thompson over 10 years</div>
         <div class="scenario-prev">Barrett's esophagus prevalence: <b>${s.prev}</b></div>
+        <button class="calc-toggle-btn" onclick="toggleCalcs(this)" title="Show or hide calculation details">
+          <span class="arrow">&#9660;</span> Hide calculations
+        </button>
+        <div class="table-container">
         <table class="outcomes-table">
           <thead><tr>
             <th style="width:22%"></th>
@@ -497,6 +537,7 @@ function buildScenarioPages() {
             </tr>
           </tbody>
         </table>
+        </div><!-- /table-container -->
         <div class="question-prompt">In this scenario, you select:</div>
         <div class="answer-options" id="opts-${s.num}">
           ${choices.map(c=>`
@@ -579,10 +620,12 @@ async function submitSurvey() {
     scenario2_val:   answers.scenario2 || '',
     scenario3_val:   answers.scenario3 || '',
     scenario4_val:   answers.scenario4 || '',
+    scenario5_val:   answers.scenario5 || '',
     scenario1_label: (labelMap[answers.scenario1]||{text:''}).text,
     scenario2_label: (labelMap[answers.scenario2]||{text:''}).text,
     scenario3_label: (labelMap[answers.scenario3]||{text:''}).text,
     scenario4_label: (labelMap[answers.scenario4]||{text:''}).text,
+    scenario5_label: (labelMap[answers.scenario5]||{text:''}).text,
     comments:        (document.getElementById('q_comments')||{}).value || ''
   };
 
@@ -674,7 +717,7 @@ async function loadResponseTable(pin) {
 
   document.getElementById('respHead').innerHTML = `<tr>
     <th>#</th><th>Time</th><th>Role</th><th>Specialty</th>
-    <th>S1 (2%)</th><th>S2 (5%)</th><th>S3 (7%)</th><th>S4 (10%)</th><th>Comments</th>
+    <th>S1 (15%)</th><th>S2 (10%)</th><th>S3 (7%)</th><th>S4 (5%)</th><th>S5 (2%)</th><th>Comments</th>
   </tr>`;
 
   if (all.length === 0) {
@@ -694,6 +737,7 @@ async function loadResponseTable(pin) {
       <td>${pill(r.scenario2_val)}</td>
       <td>${pill(r.scenario3_val)}</td>
       <td>${pill(r.scenario4_val)}</td>
+      <td>${pill(r.scenario5_val)}</td>
       <td style="max-width:180px;font-size:11px">${r.comments||''}</td>
     </tr>`;
   }).join('');

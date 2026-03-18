@@ -82,15 +82,15 @@ function parseBody(req) {
 function buildCSV(responses) {
   const headers = [
     'Response_ID','Timestamp','Medical_Provider','Specialty','Via_Social_Media',
-    'Scenario1_2pct_Code','Scenario2_5pct_Code','Scenario3_7pct_Code','Scenario4_10pct_Code',
-    'Scenario1_2pct_Label','Scenario2_5pct_Label','Scenario3_7pct_Label','Scenario4_10pct_Label',
+    'Scenario1_15pct_Code','Scenario2_10pct_Code','Scenario3_7pct_Code','Scenario4_5pct_Code','Scenario5_2pct_Code',
+    'Scenario1_15pct_Label','Scenario2_10pct_Label','Scenario3_7pct_Label','Scenario4_5pct_Label','Scenario5_2pct_Label',
     'Comments'
   ];
   const esc = v => `"${String(v||'').replace(/"/g,'""')}"`;
   const rows = responses.map(r => [
     esc(r.id), esc(r.timestamp), esc(r.role), esc(r.specialty), esc(r.via_social),
-    r.scenario1_val||'', r.scenario2_val||'', r.scenario3_val||'', r.scenario4_val||'',
-    esc(r.scenario1_label), esc(r.scenario2_label), esc(r.scenario3_label), esc(r.scenario4_label),
+    r.scenario1_val||'', r.scenario2_val||'', r.scenario3_val||'', r.scenario4_val||'', r.scenario5_val||'',
+    esc(r.scenario1_label), esc(r.scenario2_label), esc(r.scenario3_label), esc(r.scenario4_label), esc(r.scenario5_label),
     esc(r.comments)
   ].join(','));
   return [headers.join(','), ...rows].join('\r\n');
@@ -129,10 +129,12 @@ const server = http.createServer(async (req, res) => {
         scenario2_val:   body.scenario2_val   || '',
         scenario3_val:   body.scenario3_val   || '',
         scenario4_val:   body.scenario4_val   || '',
+        scenario5_val:   body.scenario5_val   || '',
         scenario1_label: body.scenario1_label || '',
         scenario2_label: body.scenario2_label || '',
         scenario3_label: body.scenario3_label || '',
         scenario4_label: body.scenario4_label || '',
+        scenario5_label: body.scenario5_label || '',
         comments:        body.comments        || '',
         ip_hash:         crypto.createHash('sha256')
                            .update(req.socket.remoteAddress || '')
@@ -185,11 +187,11 @@ const server = http.createServer(async (req, res) => {
       medical_providers: all.filter(r=>r.role==='Yes').length,
       complete: all.filter(r=>r.scenario1_val&&r.scenario2_val&&r.scenario3_val&&r.scenario4_val).length,
       specialties: {},
-      scenario_breakdown: { s1:{}, s2:{}, s3:{}, s4:{} }
+      scenario_breakdown: { s1:{}, s2:{}, s3:{}, s4:{}, s5:{} }
     };
     all.forEach(r => {
       stats.specialties[r.specialty] = (stats.specialties[r.specialty]||0)+1;
-      ['1','2','3','4'].forEach(n => {
+      ['1','2','3','4','5'].forEach(n => {
         const v = r[`scenario${n}_val`];
         if (v) stats.scenario_breakdown[`s${n}`][v] = (stats.scenario_breakdown[`s${n}`][v]||0)+1;
       });
