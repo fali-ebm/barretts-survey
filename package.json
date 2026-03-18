@@ -1,0 +1,15 @@
+{
+  "name": "barretts-esophagus-screening-survey",
+  "version": "1.0.0",
+  "description": "AGA Barrett's Esophagus Screening Threshold Elicitation Survey",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [],
+  "author": "AGA Guideline Development",
+  "license": "ISC"
+}

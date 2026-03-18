@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barrett's Esophagus Screening Survey — AGA</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 14px; line-height: 1.65;
+    background: #f4f5f7; color: #1a1a1a; min-height: 100vh;
+  }
+  .site-header {
+    background: #1a3a5c; color: #fff;
+    padding: 18px 32px; display: flex; align-items: center; gap: 16px;
+  }
+  .site-header .logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .site-header .subtitle { font-size: 13px; color: #a8c4df; margin-top: 2px; }
+  .progress-bar-wrap { background: #d8e4ee; height: 5px; }
+  .progress-bar-fill { background: #2a7abf; height: 5px; transition: width 0.4s ease; width: 0%; }
+  .container { max-width: 860px; margin: 0 auto; padding: 28px 20px 60px; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .card {
+    background: #fff; border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    padding: 28px 32px; margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 17px; font-weight: 700; color: #1a3a5c;
+    margin-bottom: 14px; padding-bottom: 10px; border-bottom: 2px solid #e8edf2;
+  }
+  .intro-text { font-size: 13.5px; line-height: 1.75; color: #333; }
+  .intro-text b { font-weight: 600; }
+  .intro-text ul { padding-left: 20px; margin: 8px 0; }
+  .intro-text li { margin-bottom: 4px; }
+  .assumption-box {
+    background: #fffbec; border: 1px solid #e6d46b; border-radius: 8px;
+    padding: 14px 18px; font-size: 12.5px; line-height: 1.7; margin-bottom: 20px;
+  }
+  .assumption-box b { font-weight: 600; }
+  .assumption-box ul { padding-left: 18px; margin-top: 6px; }
+  .assumption-box li { margin-bottom: 3px; }
+  .scenario-label { font-size: 15px; font-weight: 700; color: #1a3a5c; margin-bottom: 4px; }
+  .scenario-prev { font-size: 12.5px; color: #555; margin-bottom: 14px; }
+  .outcomes-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-bottom: 18px; }
+  .outcomes-table th {
+    padding: 9px 12px; font-weight: 600; font-size: 12px; text-align: left;
+    border-bottom: 2px solid #ccc; background: #f8f9fa;
+  }
+  .outcomes-table th.col-control { background: #fdf0f0; color: #7a1c1c; }
+  .outcomes-table th.col-intervention { background: #edf5fd; color: #1a3a5c; }
+  .outcomes-table td {
+    padding: 8px 12px; vertical-align: top;
+    border-bottom: 1px solid #e8e8e8; line-height: 1.55;
+  }
+  .outcomes-table td.col-label {
+    background: #f8f9fa; font-weight: 600; font-size: 12px; width: 22%; color: #333;
+  }
+  .outcomes-table td.col-control { background: #fdf8f8; }
+  .outcomes-table td.col-intervention { background: #f5faff; }
+  .outcomes-table tr.section-divider td {
+    background: #eef2f6; font-weight: 700; font-size: 11px;
+    letter-spacing: 0.05em; color: #555; padding: 6px 12px; text-transform: uppercase;
+  }
+  .outcomes-table tr.calc-row td {
+    background: #fafafa; font-family: "Courier New", monospace;
+    font-size: 11px; color: #777; padding: 4px 12px;
+  }
+  .outcomes-table tr.calc-row td.col-label {
+    font-family: -apple-system, Arial, sans-serif; font-size: 11px;
+    font-weight: 500; color: #aaa; background: #fafafa;
+  }
+  .outcomes-table tr.egds-row td { background: #f3eeff; padding: 10px 12px; }
+  .outcomes-table tr.egds-row td.col-label {
+    background: #f3eeff; font-weight: 700; color: #4a1d96; font-size: 12px;
+  }
+  .egds-formula { font-family: "Courier New", monospace; font-size: 11px; color: #6b48c4; }
+  .egds-result { font-weight: 700; font-size: 13px; color: #4a1d96; }
+  .question-prompt { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; }
+  .answer-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 600px) {
+    .answer-options { grid-template-columns: 1fr; }
+    .outcomes-table { font-size: 11px; }
+    .card { padding: 18px 16px; }
+  }
+  .answer-opt {
+    display: flex; align-items: center; gap: 10px; padding: 11px 16px;
+    border: 1.5px solid #d0d7de; border-radius: 8px; cursor: pointer;
+    background: #fff; transition: all 0.15s; font-size: 13px; color: #333; user-select: none;
+  }
+  .answer-opt:hover { border-color: #2a7abf; background: #f0f7ff; }
+  .answer-opt.selected { border-color: #2a7abf; background: #e8f2fc; font-weight: 600; color: #1a3a5c; }
+  .answer-opt input[type="radio"] { width: 16px; height: 16px; accent-color: #2a7abf; flex-shrink: 0; }
+  .answer-opt.no-screen-strong { border-color: #c0392b; }
+  .answer-opt.no-screen-strong.selected { background: #fdf0ee; color: #922b21; }
+  .answer-opt.no-screen-consider { border-color: #e67e22; }
+  .answer-opt.no-screen-consider.selected { background: #fef5ec; color: #784212; }
+  .answer-opt.screen-consider { border-color: #27ae60; }
+  .answer-opt.screen-consider.selected { background: #eafaf1; color: #1e5631; }
+  .answer-opt.screen-strong { border-color: #2a7abf; }
+  .answer-opt.screen-strong.selected { background: #e8f2fc; color: #1a3a5c; }
+  .unanswered-warning { color: #c0392b; font-size: 12.5px; font-weight: 600; margin-top: 8px; display: none; }
+  .form-group { margin-bottom: 18px; }
+  .form-label { font-weight: 600; font-size: 13.5px; margin-bottom: 8px; display: block; }
+  .form-label .required { color: #c0392b; margin-left: 3px; }
+  select, textarea {
+    width: 100%; padding: 10px 12px; border: 1.5px solid #d0d7de; border-radius: 7px;
+    font-size: 13.5px; font-family: inherit; color: #1a1a1a; background: #fff; transition: border-color 0.15s;
+  }
+  select:focus, textarea:focus {
+    outline: none; border-color: #2a7abf; box-shadow: 0 0 0 3px rgba(42,122,191,0.12);
+  }
+  textarea { resize: vertical; min-height: 100px; }
+  .btn-row { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+  .btn {
+    padding: 11px 28px; border-radius: 8px; font-size: 14px;
+    font-weight: 600; cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-primary { background: #1a3a5c; color: #fff; }
+  .btn-primary:hover:not(:disabled) { background: #2a5a8c; }
+  .btn-secondary { background: #e8edf2; color: #333; }
+  .btn-secondary:hover { background: #d0d8e2; }
+  .btn-success { background: #1e7e44; color: #fff; }
+  .btn-success:hover { background: #27ae60; }
+  .btn-admin { background: #4a1d96; color: #fff; }
+  .btn-admin:hover { background: #6b48c4; }
+  .btn-danger { background: #c0392b; color: #fff; font-size: 13px; padding: 9px 18px; }
+  .btn-danger:hover { background: #e74c3c; }
+  .completion-icon { font-size: 56px; text-align: center; margin-bottom: 16px; }
+  .completion-title { font-size: 22px; font-weight: 700; text-align: center; color: #1a3a5c; margin-bottom: 10px; }
+  .completion-text { text-align: center; color: #555; font-size: 14px; margin-bottom: 24px; line-height: 1.7; }
+  .response-summary {
+    background: #f8f9fa; border: 1px solid #e0e5ea;
+    border-radius: 8px; padding: 18px 22px; margin-bottom: 22px;
+  }
+  .response-summary h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: #1a3a5c; }
+  .response-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 0; border-bottom: 1px solid #e8e8e8; font-size: 13px; gap: 12px;
+  }
+  .response-row:last-child { border-bottom: none; }
+  .response-label { color: #555; }
+  .response-value { font-weight: 600; color: #1a1a1a; text-align: right; }
+  .response-badge { padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge-noscreen-strong  { background: #fde8e6; color: #922b21; }
+  .badge-noscreen-consider{ background: #fef3e2; color: #784212; }
+  .badge-screen-consider  { background: #e9f7ef; color: #1e5631; }
+  .badge-screen-strong    { background: #e8f2fc; color: #1a3a5c; }
+  .save-status { text-align: center; font-size: 13px; font-weight: 600; padding: 12px; border-radius: 8px; margin-bottom: 16px; }
+  .save-ok   { background: #e9f7ef; color: #1e5631; }
+  .save-err  { background: #fde8e6; color: #922b21; }
+  .save-wait { background: #edf5fd; color: #1a3a5c; }
+  .page-indicator { text-align: center; font-size: 12px; color: #999; margin-bottom: 18px; }
+  .consent-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 14px 18px; border: 1.5px solid #d0d7de; border-radius: 8px; cursor: pointer; background: #f8f9fa;
+  }
+  .consent-row:hover { border-color: #2a7abf; background: #f0f7ff; }
+  .consent-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #2a7abf; flex-shrink: 0; margin-top: 2px; }
+  .consent-row label { font-size: 13.5px; cursor: pointer; line-height: 1.55; }
+
+  /* ── ADMIN ── */
+  .admin-panel {
+    background: #0f172a; border-radius: 10px;
+    padding: 24px 28px; margin-bottom: 20px; color: #e2e8f0;
+  }
+  .admin-panel h3 { font-size: 16px; font-weight: 700; color: #a78bfa; margin-bottom: 6px; }
+  .admin-panel p { font-size: 13px; color: #94a3b8; margin-bottom: 16px; }
+  .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .stat-box { background: #1e293b; border-radius: 8px; padding: 14px 16px; text-align: center; }
+  .stat-num { font-size: 30px; font-weight: 700; color: #a78bfa; }
+  .stat-label { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+  .pin-row { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
+  .pin-row input {
+    width: 160px; background: #1e293b; border: 1.5px solid #334155;
+    color: #e2e8f0; font-size: 14px; padding: 10px 12px; border-radius: 7px; font-family: inherit;
+  }
+  .pin-row input:focus { outline: none; border-color: #a78bfa; }
+  .admin-status { font-size: 13px; font-weight: 600; margin-top: 8px; }
+  .ast-ok  { color: #4ade80; }
+  .ast-err { color: #f87171; }
+  .ast-inf { color: #93c5fd; }
+  .admin-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .table-wrap { overflow-x: auto; }
+  .resp-table { width: 100%; border-collapse: collapse; font-size: 12px; color: #cbd5e1; min-width: 750px; }
+  .resp-table th {
+    background: #1e293b; padding: 9px 10px; text-align: left;
+    font-weight: 600; color: #a78bfa; border-bottom: 1px solid #334155; white-space: nowrap;
+  }
+  .resp-table td { padding: 8px 10px; border-bottom: 1px solid #1e293b; vertical-align: top; }
+  .resp-table tr:hover td { background: #1e293b; }
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 11px; font-weight: 600; white-space: nowrap;
+  }
+  .pill-1 { background: #7f1d1d; color: #fca5a5; }
+  .pill-2 { background: #78350f; color: #fcd34d; }
+  .pill-3 { background: #14532d; color: #86efac; }
+  .pill-4 { background: #1e3a5c; color: #93c5fd; }
+  .no-resp { text-align: center; padding: 30px; color: #64748b; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div>
+    <div class="logo">AGA Guideline Development</div>
+    <div class="subtitle">Barrett's Esophagus Screening — Threshold Elicitation Survey</div>
+  </div>
+</div>
+<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+
+<div class="container">
+
+  <!-- PAGE 1: INTRO -->
+  <div class="page active" id="page-1">
+    <div class="page-indicator">Page 1 of 7</div>
+    <div class="card">
+      <div class="card-title">Welcome</div>
+      <div class="intro-text">
+        <p><b>Thank you for supporting the guidelines efforts of the American Gastroenterological Association.</b></p><br>
+        <p><b>IMPORTANT:</b> This is a case-based survey to assess risk tolerance and identify thresholds that lead to a change in medical decision making. Please read the case and answer the questions from the perspective of a patient.</p><br>
+        <p>This survey should take approximately <b>5 minutes</b> to complete. All responses are stored centrally and anonymously and will be used solely to inform AGA clinical guideline development for Barrett's esophagus screening.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Consent</div>
+      <div class="consent-row" onclick="document.getElementById('consent').click()">
+        <input type="checkbox" id="consent">
+        <label for="consent">I confirm that I have read the introduction and agree to participate in this survey. I understand my responses are anonymous and will be used for AGA guideline development purposes.</label>
+      </div>
+      <div class="unanswered-warning" id="warn-consent">Please confirm consent to continue.</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="nextPage(1)">Begin survey &rarr;</button>
+    </div>
+  </div>
+
+  <!-- PAGE 2: ABOUT YOU -->
+  <div class="page" id="page-2">
+    <div class="page-indicator">Page 2 of 7</div>
+    <div class="card">
+      <div class="card-title">About you</div>
+      <div class="form-group">
+        <label class="form-label" for="q_role">Are you a medical provider? <span class="required">*</span></label>
+        <select id="q_role">
+          <option value="">— Select —</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+        <div class="unanswered-warning" id="warn-role">Please select an option.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="q_specialty">What is your primary specialty or role? <span class="required">*</span></label>
+        <select id="q_specialty">
+          <option value="">— Select —</option>
+          <option value="Gastroenterology">Gastroenterology</option>
+          <option value="General internal medicine / primary care">General internal medicine / primary care</option>
+          <option value="Surgery">Surgery</option>
+          <option value="Oncology">Oncology</option>
+          <option value="Pathology">Pathology</option>
+          <option value="Epidemiology / public health">Epidemiology / public health</option>
+          <option value="Patient / patient advocate">Patient / patient advocate</option>
+          <option value="Other">Other</option>
+        </select>
+        <div class="unanswered-warning" id="warn-specialty">Please select an option.</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="q_twitter">Are you taking this survey through a shared link or social media?</label>
+        <select id="q_twitter">
+          <option value="">— Select —</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevPage(2)">&larr; Back</button>
+      <button class="btn btn-primary" onclick="nextPage(2)">Continue &rarr;</button>
+    </div>
+  </div>
+
+  <!-- PAGE 3: CASE STUDY -->
+  <div class="page" id="page-3">
+    <div class="page-indicator">Page 3 of 7</div>
+    <div class="card">
+      <div class="card-title">Case study</div>
+      <div class="intro-text">
+        <p><b>Mr. Thompson</b> is a 55-year-old man with longstanding gastroesophageal reflux disease (GERD). He is being considered for endoscopic screening for Barrett's esophagus (BE). Barrett's esophagus is a premalignant condition that can progress to esophageal adenocarcinoma (EAC). There are two management strategies over a 10-year follow-up period:</p><br>
+        <p><b>Strategy WITHOUT screening:</b> No endoscopy performed. Barrett's esophagus, if present, remains undetected. Esophageal cancer, if it develops, is diagnosed only when symptoms appear — typically at an advanced, less treatable stage.</p><br>
+        <p><b>Strategy WITH screening:</b> All 10,000 individuals undergo one initial screening endoscopy. Those found to have Barrett's esophagus (approximately 90% of those with Barrett's are detected; 10% are missed) then receive up to 3 further surveillance endoscopies over the 10-year period — 4 endoscopies in total. Those without Barrett's, or with missed Barrett's, receive only the 1 initial screening endoscopy.</p><br>
+        <p><b>The following series of questions are designed to identify, based on varying the background prevalence of Barrett's esophagus, a threshold where one favors either offering screening or not.</b></p>
+      </div>
+    </div>
+    <div class="assumption-box">
+      <b>Assumptions for this exercise — please read carefully:</b>
+      <ul>
+        <li>Annual progression rate from Barrett's to EAC: 0.6% &nbsp;·&nbsp; 10-year cumulative: 5.84% (calculated as 1 − 0.994<sup>10</sup>)</li>
+        <li>EAC 10-year mortality: <b>35.8%</b> for detected Barrett's (under surveillance) vs. <b>57.8%</b> for undetected Barrett's</li>
+        <li>Screening detects <b>90%</b> of Barrett's esophagus; 10% are missed and carry the same mortality as the unscreened arm</li>
+        <li>EGD count applies only to the screened arm: detected Barrett's → 4 EGDs total; all others → 1 EGD (initial screen only)</li>
+        <li>EGDs per death averted = [10,000 + (BE detected × 3)] ÷ [BE detected × 0.0584 × 0.220]</li>
+        <li>Cost of endoscopy or surveillance should not impact decision making in this exercise</li>
+      </ul>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevPage(3)">&larr; Back</button>
+      <button class="btn btn-primary" onclick="nextPage(3)">Begin scenarios &rarr;</button>
+    </div>
+  </div>
+
+  <!-- SCENARIO PAGES (injected by JS) -->
+  <div id="scenario-pages"></div>
+
+  <!-- COMPLETION PAGE -->
+  <div class="page" id="page-complete">
+    <div class="card">
+      <div class="completion-icon">&#10003;</div>
+      <div class="completion-title">Survey complete — thank you!</div>
+      <div class="completion-text">Your response has been submitted to the central database.<br>A summary of your answers is shown below.</div>
+      <div id="saveStatus" class="save-status save-wait">Submitting response...</div>
+      <div class="response-summary" id="responseSummary"></div>
+    </div>
+  </div>
+
+  <!-- ADMIN PAGE -->
+  <div class="page" id="page-admin">
+    <div class="admin-panel">
+      <h3>&#9881; Admin — Response Dashboard</h3>
+      <p>Enter the admin PIN to view and download all responses from the central database.</p>
+      <div class="pin-row">
+        <input type="password" id="adminPin" placeholder="Enter PIN" maxlength="20"
+               onkeydown="if(event.key==='Enter') loadAdmin()">
+        <button class="btn btn-admin" onclick="loadAdmin()">Unlock</button>
+      </div>
+      <div class="admin-status" id="adminStatus"></div>
+    </div>
+    <div id="adminContent" style="display:none">
+      <div class="admin-panel">
+        <div class="admin-stats" id="adminStats">
+          <div class="stat-box"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total responses</div></div>
+          <div class="stat-box"><div class="stat-num" id="statMD">—</div><div class="stat-label">Medical providers</div></div>
+          <div class="stat-box"><div class="stat-num" id="statComplete">—</div><div class="stat-label">Complete</div></div>
+        </div>
+        <div class="admin-actions">
+          <button class="btn btn-success" onclick="downloadCSV()">&#8595; Download all responses (CSV)</button>
+          <button class="btn btn-secondary" onclick="refreshAdmin()" style="font-size:13px;padding:9px 18px">&#8635; Refresh</button>
+          <button class="btn btn-danger" onclick="clearAll()">&#128465; Clear all responses</button>
+        </div>
+        <div class="table-wrap">
+          <table class="resp-table">
+            <thead id="respHead"></thead>
+            <tbody id="respBody"><tr><td colspan="9" class="no-resp">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="showSurvey()">&larr; Back to survey</button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<div style="position:fixed;bottom:16px;right:20px;z-index:100">
+  <button onclick="showAdmin()"
+    style="background:rgba(0,0,0,0.12);border:none;color:#888;font-size:11px;
+           padding:6px 14px;border-radius:20px;cursor:pointer;font-family:inherit">
+    Admin
+  </button>
+</div>
+
+<script>
+const TOTAL_PAGES = 7;
+const answers = {};
+let adminPinValue = '';
+
+const labelMap = {
+  "1":{ text:"No screening — nearly always",    badge:"badge-noscreen-strong",  pill:"pill-1" },
+  "2":{ text:"No screening — consider",          badge:"badge-noscreen-consider",pill:"pill-2" },
+  "3":{ text:"Offer screening — consider",       badge:"badge-screen-consider",  pill:"pill-3" },
+  "4":{ text:"Offer screening — nearly always",  badge:"badge-screen-strong",    pill:"pill-4" }
+};
+
+const scenarios = [
+  {
+    prev:"2%", num:1, page:4,
+    be_total:200, be_det:180, be_miss:20,
+    eac_u:12, eac_d:11, eac_m:1,
+    d_u:7, d_d:4, d_m:1, d_s:5, averted:2,
+    egds_det:720, egds_non:9820, egds_total:"10,540", egds_pd:"4,557",
+    calc_eac_u:"200 × 0.0584 = 11.7 ≈ 12", calc_eac_d:"180 × 0.0584 = 10.5 ≈ 11", calc_eac_m:"20 × 0.0584 = 1.2 ≈ 1",
+    calc_d_u:"11.7 × 0.578 = 6.8 ≈ 7",   calc_d_d:"10.5 × 0.358 = 3.8 ≈ 4",   calc_d_m:"1.2 × 0.578 = 0.7 ≈ 1",
+    calc_av:"6.8 − 4.4 = 2.3 ≈ 2",
+    formula:"[10,000 + (180×3)] ÷ [180 × 0.0584 × 0.220] = 10,540 ÷ 2.31"
+  },
+  {
+    prev:"5%", num:2, page:5,
+    be_total:500, be_det:450, be_miss:50,
+    eac_u:29, eac_d:26, eac_m:3,
+    d_u:17, d_d:9, d_m:2, d_s:11, averted:6,
+    egds_det:1800, egds_non:9550, egds_total:"11,350", egds_pd:"1,963",
+    calc_eac_u:"500 × 0.0584 = 29.2 ≈ 29", calc_eac_d:"450 × 0.0584 = 26.3 ≈ 26", calc_eac_m:"50 × 0.0584 = 2.9 ≈ 3",
+    calc_d_u:"29.2 × 0.578 = 16.9 ≈ 17",  calc_d_d:"26.3 × 0.358 = 9.4 ≈ 9",   calc_d_m:"2.9 × 0.578 = 1.7 ≈ 2",
+    calc_av:"16.9 − 11.1 = 5.8 ≈ 6",
+    formula:"[10,000 + (450×3)] ÷ [450 × 0.0584 × 0.220] = 11,350 ÷ 5.78"
+  },
+  {
+    prev:"7%", num:3, page:6,
+    be_total:700, be_det:630, be_miss:70,
+    eac_u:41, eac_d:37, eac_m:4,
+    d_u:24, d_d:13, d_m:2, d_s:16, averted:8,
+    egds_det:2520, egds_non:9370, egds_total:"11,890", egds_pd:"1,469",
+    calc_eac_u:"700 × 0.0584 = 40.9 ≈ 41", calc_eac_d:"630 × 0.0584 = 36.8 ≈ 37", calc_eac_m:"70 × 0.0584 = 4.1 ≈ 4",
+    calc_d_u:"40.9 × 0.578 = 23.6 ≈ 24",  calc_d_d:"36.8 × 0.358 = 13.2 ≈ 13",  calc_d_m:"4.1 × 0.578 = 2.4 ≈ 2",
+    calc_av:"23.6 − 15.5 = 8.1 ≈ 8",
+    formula:"[10,000 + (630×3)] ÷ [630 × 0.0584 × 0.220] = 11,890 ÷ 8.10"
+  },
+  {
+    prev:"10%", num:4, page:7,
+    be_total:1000, be_det:900, be_miss:100,
+    eac_u:58, eac_d:53, eac_m:6,
+    d_u:34, d_d:19, d_m:3, d_s:22, averted:12,
+    egds_det:3600, egds_non:9100, egds_total:"12,700", egds_pd:"1,098",
+    calc_eac_u:"1,000 × 0.0584 = 58.4 ≈ 58", calc_eac_d:"900 × 0.0584 = 52.6 ≈ 53", calc_eac_m:"100 × 0.0584 = 5.8 ≈ 6",
+    calc_d_u:"58.4 × 0.578 = 33.8 ≈ 34",    calc_d_d:"52.6 × 0.358 = 18.8 ≈ 19",   calc_d_m:"5.8 × 0.578 = 3.4 ≈ 3",
+    calc_av:"33.8 − 22.2 = 11.6 ≈ 12",
+    formula:"[10,000 + (900×3)] ÷ [900 × 0.0584 × 0.220] = 12,700 ÷ 11.56"
+  }
+];
+
+// ── BUILD SCENARIO PAGES ──────────────────────────────────────────────────────
+function buildScenarioPages() {
+  const container = document.getElementById('scenario-pages');
+  const choices = [
+    { val:"1", label:"No screening — nearly always", cls:"no-screen-strong" },
+    { val:"2", label:"No screening — consider",      cls:"no-screen-consider" },
+    { val:"3", label:"Offer screening — consider",   cls:"screen-consider" },
+    { val:"4", label:"Offer screening — nearly always", cls:"screen-strong" }
+  ];
+
+  scenarios.forEach(s => {
+    const isLast = s.page === TOTAL_PAGES;
+    const div = document.createElement('div');
+    div.className = 'page';
+    div.id = `page-${s.page}`;
+    div.innerHTML = `
+      <div class="page-indicator">Page ${s.page} of ${TOTAL_PAGES}</div>
+      <div class="card">
+        <div class="scenario-label">Scenario ${s.num} — out of 10,000 people like Mr. Thompson over 10 years</div>
+        <div class="scenario-prev">Barrett's esophagus prevalence: <b>${s.prev}</b></div>
+        <table class="outcomes-table">
+          <thead><tr>
+            <th style="width:22%"></th>
+            <th class="col-control" style="width:39%">Without screening (no endoscopy)</th>
+            <th class="col-intervention" style="width:39%">With screening (EGD offered)</th>
+          </tr></thead>
+          <tbody>
+            <tr class="section-divider"><td colspan="3">Level 1 — Barrett's detection</td></tr>
+            <tr>
+              <td class="col-label">Barrett's esophagus present</td>
+              <td class="col-control">${s.be_total.toLocaleString()} have Barrett's — all remain undetected throughout follow-up</td>
+              <td class="col-intervention">${s.be_total.toLocaleString()} have Barrett's · <b>${s.be_det.toLocaleString()} detected</b> (90%) → enter surveillance · <b>${s.be_miss} missed</b> (10%) → no surveillance benefit</td>
+            </tr>
+            <tr class="calc-row">
+              <td class="col-label">calculation</td>
+              <td>10,000 × ${s.prev} = ${s.be_total.toLocaleString()}</td>
+              <td>${s.be_total.toLocaleString()} × 0.90 = ${s.be_det.toLocaleString()} · ${s.be_total.toLocaleString()} × 0.10 = ${s.be_miss}</td>
+            </tr>
+            <tr class="section-divider"><td colspan="3">Level 2 — patient outcomes over 10 years</td></tr>
+            <tr>
+              <td class="col-label">Progress to esophageal cancer (EAC)</td>
+              <td class="col-control">${s.eac_u} develop EAC — all detected at advanced stage when symptomatic</td>
+              <td class="col-intervention">${s.eac_d} EAC from detected Barrett's (early stage) · ${s.eac_m} EAC from missed Barrett's (advanced stage)</td>
+            </tr>
+            <tr class="calc-row">
+              <td class="col-label">calculation</td>
+              <td>${s.calc_eac_u}</td>
+              <td>${s.calc_eac_d} · ${s.calc_eac_m}</td>
+            </tr>
+            <tr>
+              <td class="col-label">Deaths from esophageal cancer</td>
+              <td class="col-control">${s.d_u} die from EAC over 10 years</td>
+              <td class="col-intervention">${s.d_d} die from detected arm · ${s.d_m} die from missed arm · <b>${s.d_s} total deaths</b> in screened arm</td>
+            </tr>
+            <tr class="calc-row">
+              <td class="col-label">calculation</td>
+              <td>${s.calc_d_u}</td>
+              <td>${s.calc_d_d} · ${s.calc_d_m} · total = ${s.d_d+s.d_m}</td>
+            </tr>
+            <tr>
+              <td class="col-label">Deaths averted by screening</td>
+              <td class="col-control">—</td>
+              <td class="col-intervention"><b>${s.averted} deaths averted</b> — mortality benefit of screening at this prevalence (${s.d_u} → ${s.d_s})</td>
+            </tr>
+            <tr class="calc-row">
+              <td class="col-label">calculation</td>
+              <td>—</td>
+              <td>${s.calc_av}</td>
+            </tr>
+            <tr>
+              <td class="col-label">Total endoscopies — screened arm</td>
+              <td class="col-control">Not counted</td>
+              <td class="col-intervention">(${s.be_det.toLocaleString()} × 4) + (${s.egds_non.toLocaleString()} × 1) = ${s.egds_det.toLocaleString()} + ${s.egds_non.toLocaleString()} = <b>${s.egds_total} endoscopies</b></td>
+            </tr>
+            <tr class="egds-row">
+              <td class="col-label">EGDs per death averted</td>
+              <td>—</td>
+              <td><span class="egds-formula">${s.formula} = </span><span class="egds-result">${s.egds_pd} EGDs per death averted</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="question-prompt">In this scenario, you select:</div>
+        <div class="answer-options" id="opts-${s.num}">
+          ${choices.map(c=>`
+            <label class="answer-opt ${c.cls}" id="opt-${s.num}-${c.val}"
+                   onclick="selectAnswer(${s.num},'${c.val}',this)">
+              <input type="radio" name="q${s.num}" value="${c.val}"> ${c.label}
+            </label>`).join('')}
+        </div>
+        <div class="unanswered-warning" id="warn-s${s.num}">Please select an answer to continue.</div>
+        ${isLast ? `
+          <br>
+          <div class="form-group">
+            <label class="form-label" for="q_comments">Comments or suggestions (optional):</label>
+            <textarea id="q_comments" placeholder="Your comments here..."></textarea>
+          </div>` : ''}
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="prevPage(${s.page})">&larr; Back</button>
+        <button class="btn btn-primary" id="btn-next-${s.page}" onclick="nextPage(${s.page})">
+          ${isLast ? 'Submit survey ✓' : 'Next scenario &rarr;'}
+        </button>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+// ── ANSWER SELECTION ──────────────────────────────────────────────────────────
+function selectAnswer(num, val, el) {
+  document.querySelectorAll(`#opts-${num} .answer-opt`).forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  el.querySelector('input').checked = true;
+  answers[`scenario${num}`] = val;
+  document.getElementById(`warn-s${num}`).style.display = 'none';
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function nextPage(current) {
+  if (current === 1 && !document.getElementById('consent').checked) {
+    document.getElementById('warn-consent').style.display = 'block'; return;
+  }
+  if (current === 2) {
+    let ok = true;
+    if (!document.getElementById('q_role').value)     { document.getElementById('warn-role').style.display='block'; ok=false; }
+    if (!document.getElementById('q_specialty').value){ document.getElementById('warn-specialty').style.display='block'; ok=false; }
+    if (!ok) return;
+  }
+  if (current >= 4) {
+    const sNum = current - 3;
+    if (!answers[`scenario${sNum}`]) {
+      document.getElementById(`warn-s${sNum}`).style.display = 'block'; return;
+    }
+  }
+  document.getElementById(`page-${current}`).classList.remove('active');
+  if (current === TOTAL_PAGES) {
+    submitSurvey();
+  } else {
+    document.getElementById(`page-${current+1}`).classList.add('active');
+    updateProgress(current+1);
+    window.scrollTo(0,0);
+  }
+}
+
+function prevPage(current) {
+  document.getElementById(`page-${current}`).classList.remove('active');
+  document.getElementById(`page-${current-1}`).classList.add('active');
+  updateProgress(current-1);
+  window.scrollTo(0,0);
+}
+
+function updateProgress(page) {
+  document.getElementById('progressBar').style.width = ((page-1)/TOTAL_PAGES*100)+'%';
+}
+
+// ── SUBMIT TO SERVER ──────────────────────────────────────────────────────────
+async function submitSurvey() {
+  updateProgress(TOTAL_PAGES+1);
+
+  const payload = {
+    role:            document.getElementById('q_role').value,
+    specialty:       document.getElementById('q_specialty').value,
+    via_social:      document.getElementById('q_twitter').value || '',
+    scenario1_val:   answers.scenario1 || '',
+    scenario2_val:   answers.scenario2 || '',
+    scenario3_val:   answers.scenario3 || '',
+    scenario4_val:   answers.scenario4 || '',
+    scenario1_label: (labelMap[answers.scenario1]||{text:''}).text,
+    scenario2_label: (labelMap[answers.scenario2]||{text:''}).text,
+    scenario3_label: (labelMap[answers.scenario3]||{text:''}).text,
+    scenario4_label: (labelMap[answers.scenario4]||{text:''}).text,
+    comments:        (document.getElementById('q_comments')||{}).value || ''
+  };
+
+  // Build summary (show before API call completes)
+  let html = `<h3>Your responses</h3>
+    <div class="response-row"><span class="response-label">Role</span><span class="response-value">${payload.role}</span></div>
+    <div class="response-row"><span class="response-label">Specialty</span><span class="response-value">${payload.specialty}</span></div>`;
+  scenarios.forEach(s=>{
+    const val = answers[`scenario${s.num}`];
+    const info = labelMap[val]||{text:'—',badge:''};
+    html+=`<div class="response-row">
+      <span class="response-label">Scenario ${s.num} (${s.prev} prevalence)</span>
+      <span class="response-value"><span class="response-badge ${info.badge}">${info.text}</span></span>
+    </div>`;
+  });
+  document.getElementById('responseSummary').innerHTML = html;
+  document.getElementById('page-complete').classList.add('active');
+  window.scrollTo(0,0);
+
+  // POST to server
+  const statusEl = document.getElementById('saveStatus');
+  try {
+    const res = await fetch('/api/response', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.ok) {
+      statusEl.className = 'save-status save-ok';
+      statusEl.textContent = `✓ Response saved to central database (${data.total} total response${data.total===1?'':'s'} collected)`;
+    } else {
+      throw new Error(data.error);
+    }
+  } catch (e) {
+    statusEl.className = 'save-status save-err';
+    statusEl.textContent = `⚠ Could not reach server: ${e.message}. Please contact the research team.`;
+  }
+}
+
+// ── ADMIN ─────────────────────────────────────────────────────────────────────
+function showAdmin() {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-admin').classList.add('active');
+  document.getElementById('adminContent').style.display = 'none';
+  document.getElementById('adminStatus').textContent = '';
+  document.getElementById('adminPin').value = '';
+  adminPinValue = '';
+  window.scrollTo(0,0);
+}
+
+function showSurvey() {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-1').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+async function loadAdmin() {
+  const pin = document.getElementById('adminPin').value;
+  adminPinValue = pin;
+  const statusEl = document.getElementById('adminStatus');
+  statusEl.className = 'admin-status ast-inf';
+  statusEl.textContent = 'Verifying...';
+
+  try {
+    const res = await fetch('/api/stats', { headers: { 'X-Admin-Pin': pin } });
+    if (res.status === 401) {
+      statusEl.className='admin-status ast-err'; statusEl.textContent='Incorrect PIN.'; return;
+    }
+    const data = await res.json();
+    statusEl.className='admin-status ast-ok'; statusEl.textContent='Access granted.';
+    document.getElementById('adminContent').style.display='block';
+    document.getElementById('statTotal').textContent    = data.stats.total;
+    document.getElementById('statMD').textContent       = data.stats.medical_providers;
+    document.getElementById('statComplete').textContent = data.stats.complete;
+    await loadResponseTable(pin);
+  } catch(e) {
+    statusEl.className='admin-status ast-err';
+    statusEl.textContent=`Error: ${e.message}`;
+  }
+}
+
+async function refreshAdmin() { await loadAdmin(); }
+
+async function loadResponseTable(pin) {
+  const res  = await fetch('/api/responses', { headers: { 'X-Admin-Pin': pin } });
+  const data = await res.json();
+  const all  = data.responses || [];
+
+  document.getElementById('respHead').innerHTML = `<tr>
+    <th>#</th><th>Time</th><th>Role</th><th>Specialty</th>
+    <th>S1 (2%)</th><th>S2 (5%)</th><th>S3 (7%)</th><th>S4 (10%)</th><th>Comments</th>
+  </tr>`;
+
+  if (all.length === 0) {
+    document.getElementById('respBody').innerHTML = '<tr><td colspan="9" class="no-resp">No responses yet.</td></tr>';
+    return;
+  }
+
+  document.getElementById('respBody').innerHTML = all.map((r,i)=>{
+    const ts = new Date(r.timestamp).toLocaleString();
+    const pill = v => v ? `<span class="pill ${(labelMap[v]||{pill:'pill-3'}).pill}">${v}</span>` : '—';
+    return `<tr>
+      <td>${i+1}</td>
+      <td style="white-space:nowrap;font-size:11px">${ts}</td>
+      <td>${r.role||'—'}</td>
+      <td style="font-size:11px">${r.specialty||'—'}</td>
+      <td>${pill(r.scenario1_val)}</td>
+      <td>${pill(r.scenario2_val)}</td>
+      <td>${pill(r.scenario3_val)}</td>
+      <td>${pill(r.scenario4_val)}</td>
+      <td style="max-width:180px;font-size:11px">${r.comments||''}</td>
+    </tr>`;
+  }).join('');
+}
+
+function downloadCSV() {
+  const date = new Date().toISOString().slice(0,10);
+  window.location.href = `/api/responses/csv?pin=${encodeURIComponent(adminPinValue)}`;
+}
+
+async function clearAll() {
+  const count = document.getElementById('statTotal').textContent;
+  if (!confirm(`Delete all ${count} responses permanently? This cannot be undone.`)) return;
+  try {
+    const res = await fetch('/api/responses', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin: adminPinValue })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      document.getElementById('adminStatus').className='admin-status ast-ok';
+      document.getElementById('adminStatus').textContent=`Cleared ${data.cleared} responses.`;
+      document.getElementById('statTotal').textContent='0';
+      document.getElementById('statMD').textContent='0';
+      document.getElementById('statComplete').textContent='0';
+      document.getElementById('respBody').innerHTML='<tr><td colspan="9" class="no-resp">No responses yet.</td></tr>';
+    }
+  } catch(e) {
+    alert('Error clearing responses: '+e.message);
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+buildScenarioPages();
+updateProgress(1);
+</script>
+</body>
+</html>
