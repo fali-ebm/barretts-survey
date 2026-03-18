@@ -154,14 +154,6 @@
   .save-err  { background: #fde8e6; color: #922b21; }
   .save-wait { background: #edf5fd; color: #1a3a5c; }
   .page-indicator { text-align: center; font-size: 12px; color: #999; margin-bottom: 18px; }
-  .consent-row {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 14px 18px; border: 1.5px solid #d0d7de; border-radius: 8px; cursor: pointer; background: #f8f9fa;
-  }
-  .consent-row:hover { border-color: #2a7abf; background: #f0f7ff; }
-  .consent-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: #2a7abf; flex-shrink: 0; margin-top: 2px; }
-  .consent-row label { font-size: 13.5px; cursor: pointer; line-height: 1.55; }
-
   /* ── ADMIN ── */
   .admin-panel {
     background: #0f172a; border-radius: 10px;
@@ -225,14 +217,6 @@
         <p><b>IMPORTANT:</b> This is a case-based survey to assess risk tolerance and identify thresholds that lead to a change in medical decision making. Please read the case and answer the questions from the perspective of a patient.</p><br>
         <p>This survey should take approximately <b>5 minutes</b> to complete. All responses are stored centrally and anonymously and will be used solely to inform AGA clinical guideline development for Barrett's esophagus screening.</p>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-title">Consent</div>
-      <div class="consent-row" onclick="document.getElementById('consent').click()">
-        <input type="checkbox" id="consent">
-        <label for="consent">I confirm that I have read the introduction and agree to participate in this survey. I understand my responses are anonymous and will be used for AGA guideline development purposes.</label>
-      </div>
-      <div class="unanswered-warning" id="warn-consent">Please confirm consent to continue.</div>
     </div>
     <div class="btn-row">
       <button class="btn btn-primary" onclick="nextPage(1)">Begin survey &rarr;</button>
@@ -550,9 +534,6 @@ function selectAnswer(num, val, el) {
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
 function nextPage(current) {
-  if (current === 1 && !document.getElementById('consent').checked) {
-    document.getElementById('warn-consent').style.display = 'block'; return;
-  }
   if (current === 2) {
     let ok = true;
     if (!document.getElementById('q_role').value)     { document.getElementById('warn-role').style.display='block'; ok=false; }

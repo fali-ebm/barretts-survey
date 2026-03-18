@@ -175,3 +175,12 @@ The file is plain JSON — you can open it in any text editor.
 
 Press Ctrl+C in the terminal where the server is running.
 All saved responses remain in responses.json.
+
+## Permissions note for Railway volumes
+
+Railway mounts volumes as root. Add this environment variable in Railway
+to avoid permission errors:
+
+  RAILWAY_RUN_UID = 0
+
+Set this under your service Variables tab in the Railway dashboard.

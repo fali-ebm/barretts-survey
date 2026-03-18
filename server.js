@@ -18,7 +18,7 @@ const ADMIN_PIN = process.env.ADMIN_PIN  || 'AGA2026';
 
 // Data file: use /data/ if it exists (Railway persistent volume),
 // otherwise fall back to local directory (development)
-const DATA_DIR  = fs.existsSync('/data') ? '/data' : __dirname;
+const DATA_DIR  = fs.existsSync("/app/data") ? "/app/data" : fs.existsSync("/data") ? "/data" : __dirname;
 const DATA_FILE = path.join(DATA_DIR, 'responses.json');
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
