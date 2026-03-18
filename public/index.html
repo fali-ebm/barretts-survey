@@ -219,9 +219,11 @@
 
 <div class="container">
 
-  <!-- PAGE 1: INTRO -->
+  <!-- PAGE 1: INTRO + ABOUT YOU + CASE STUDY (single page) -->
   <div class="page active" id="page-1">
-    <div class="page-indicator">Page 1 of 8</div>
+    <div class="page-indicator">Page 1 of 6 — Introduction &amp; Case Study</div>
+
+    <!-- Welcome -->
     <div class="card">
       <div class="card-title">Welcome</div>
       <div class="intro-text">
@@ -230,14 +232,8 @@
         <p>This survey should take approximately <b>5 minutes</b> to complete. All responses are stored centrally and anonymously and will be used solely to inform AGA clinical guideline development for Barrett's esophagus screening.</p>
       </div>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" onclick="nextPage(1)">Begin survey &rarr;</button>
-    </div>
-  </div>
 
-  <!-- PAGE 2: ABOUT YOU -->
-  <div class="page" id="page-2">
-    <div class="page-indicator">Page 2 of 8</div>
+    <!-- About you -->
     <div class="card">
       <div class="card-title">About you</div>
       <div class="form-group">
@@ -273,15 +269,8 @@
         </select>
       </div>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" onclick="prevPage(2)">&larr; Back</button>
-      <button class="btn btn-primary" onclick="nextPage(2)">Continue &rarr;</button>
-    </div>
-  </div>
 
-  <!-- PAGE 3: CASE STUDY -->
-  <div class="page" id="page-3">
-    <div class="page-indicator">Page 3 of 8</div>
+    <!-- Case study -->
     <div class="card">
       <div class="card-title">Case study</div>
       <div class="intro-text">
@@ -291,6 +280,8 @@
         <p><b>The following series of questions are designed to identify, based on varying the background prevalence of Barrett's esophagus, a threshold where one favors either offering screening or not.</b></p>
       </div>
     </div>
+
+    <!-- Assumptions -->
     <div class="assumption-box">
       <b>Assumptions for this exercise — please read carefully:</b>
       <ul>
@@ -302,9 +293,9 @@
         <li>Cost of endoscopy or surveillance should not impact decision making in this exercise</li>
       </ul>
     </div>
+
     <div class="btn-row">
-      <button class="btn btn-secondary" onclick="prevPage(3)">&larr; Back</button>
-      <button class="btn btn-primary" onclick="nextPage(3)">Begin scenarios &rarr;</button>
+      <button class="btn btn-primary" onclick="nextPage(1)">Begin scenarios &rarr;</button>
     </div>
   </div>
 
@@ -370,7 +361,7 @@
 </div>
 
 <script>
-const TOTAL_PAGES = 8;
+const TOTAL_PAGES = 6;
 const answers = {};
 let adminPinValue = '';
 
@@ -383,7 +374,7 @@ const labelMap = {
 
 const scenarios = [
   {
-    prev:"15%", num:1, page:4,
+    prev:"15%", num:1, page:2,
     be_total:1500, be_det:1350, be_miss:150,
     eac_u:88, eac_d:79, eac_m:9,
     d_u:51, d_d:28, d_m:5, d_s:33, averted:17,
@@ -394,7 +385,7 @@ const scenarios = [
     formula:"[10,000 + (1,350×3)] ÷ [1,350 × 0.0584 × 0.220] = 14,050 ÷ 17.35"
   },
   {
-    prev:"10%", num:2, page:5,
+    prev:"10%", num:2, page:3,
     be_total:1000, be_det:900, be_miss:100,
     eac_u:58, eac_d:53, eac_m:6,
     d_u:34, d_d:19, d_m:3, d_s:22, averted:12,
@@ -405,7 +396,7 @@ const scenarios = [
     formula:"[10,000 + (900×3)] ÷ [900 × 0.0584 × 0.220] = 12,700 ÷ 11.56"
   },
   {
-    prev:"7%", num:3, page:6,
+    prev:"7%", num:3, page:4,
     be_total:700, be_det:630, be_miss:70,
     eac_u:41, eac_d:37, eac_m:4,
     d_u:24, d_d:13, d_m:2, d_s:16, averted:8,
@@ -416,7 +407,7 @@ const scenarios = [
     formula:"[10,000 + (630×3)] ÷ [630 × 0.0584 × 0.220] = 11,890 ÷ 8.10"
   },
   {
-    prev:"5%", num:4, page:7,
+    prev:"5%", num:4, page:5,
     be_total:500, be_det:450, be_miss:50,
     eac_u:29, eac_d:26, eac_m:3,
     d_u:17, d_d:9, d_m:2, d_s:11, averted:6,
@@ -427,7 +418,7 @@ const scenarios = [
     formula:"[10,000 + (450×3)] ÷ [450 × 0.0584 × 0.220] = 11,350 ÷ 5.78"
   },
   {
-    prev:"2%", num:5, page:8,
+    prev:"2%", num:5, page:6,
     be_total:200, be_det:180, be_miss:20,
     eac_u:12, eac_d:11, eac_m:1,
     d_u:7, d_d:4, d_m:1, d_s:5, averted:2,
@@ -473,9 +464,9 @@ function buildScenarioPages() {
         <div class="scenario-label">Scenario ${s.num} — out of 10,000 people like Mr. Thompson over 10 years</div>
         <div class="scenario-prev">Barrett's esophagus prevalence: <b>${s.prev}</b></div>
         <button class="calc-toggle-btn" onclick="toggleCalcs(this)" title="Show or hide calculation details">
-          <span class="arrow">&#9660;</span> Hide calculations
+          <span class="arrow" style="display:inline-block;transform:rotate(-90deg)">&#9660;</span> Show calculations
         </button>
-        <div class="table-container">
+        <div class="table-container calcs-hidden">
         <table class="outcomes-table">
           <thead><tr>
             <th style="width:22%"></th>
@@ -533,7 +524,12 @@ function buildScenarioPages() {
             <tr class="egds-row">
               <td class="col-label">EGDs per death averted</td>
               <td>—</td>
-              <td><span class="egds-formula">${s.formula} = </span><span class="egds-result">${s.egds_pd} EGDs per death averted</span></td>
+              <td><span class="egds-result">${s.egds_pd} EGDs per death averted</span></td>
+            </tr>
+            <tr class="calc-row">
+              <td class="col-label">calculation</td>
+              <td>—</td>
+              <td>${s.formula}</td>
             </tr>
           </tbody>
         </table>
@@ -575,14 +571,14 @@ function selectAnswer(num, val, el) {
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
 function nextPage(current) {
-  if (current === 2) {
+  if (current === 1) {
     let ok = true;
     if (!document.getElementById('q_role').value)     { document.getElementById('warn-role').style.display='block'; ok=false; }
     if (!document.getElementById('q_specialty').value){ document.getElementById('warn-specialty').style.display='block'; ok=false; }
     if (!ok) return;
   }
-  if (current >= 4) {
-    const sNum = current - 3;
+  if (current >= 2) {
+    const sNum = current - 1;
     if (!answers[`scenario${sNum}`]) {
       document.getElementById(`warn-s${sNum}`).style.display = 'block'; return;
     }
