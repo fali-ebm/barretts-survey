@@ -90,6 +90,21 @@
   .outcomes-table tr.egds-row td.col-intervention { background: #f3eeff; }
   .egds-formula { font-family: "Courier New", monospace; font-size: 11px; color: #6b48c4; }
   .egds-result { font-weight: 700; font-size: 13px; color: #4a1d96; }
+  /* Custom prevalence scenario */
+  .custom-scenario-card { border: 2px solid #2a7abf; }
+  .custom-scenario-card .card-title { color: #1a3a5c; }
+  .custom-prev-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+  .custom-prev-row label { font-weight: 600; font-size: 13.5px; color: #1a3a5c; white-space: nowrap; }
+  .prev-input-wrap { display: flex; align-items: center; gap: 6px; }
+  .prev-input-wrap input[type="number"] {
+    width: 90px; padding: 8px 10px; border: 2px solid #2a7abf; border-radius: 7px;
+    font-size: 16px; font-weight: 700; color: #1a3a5c; text-align: center;
+    font-family: inherit; background: #f0f7ff;
+  }
+  .prev-input-wrap input[type="number"]:focus { outline: none; border-color: #1a3a5c; background: #e4f0fc; }
+  .prev-input-wrap .pct-symbol { font-size: 16px; font-weight: 700; color: #1a3a5c; }
+  .prev-range-hint { font-size: 12px; color: #888; }
+  .custom-not-entered { text-align: center; padding: 24px; color: #aaa; font-size: 13px; font-style: italic; }
   .question-prompt { font-size: 14px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; }
   .answer-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 600px) {
@@ -221,7 +236,7 @@
 
   <!-- PAGE 1: INTRO + ABOUT YOU + CASE STUDY (single page) -->
   <div class="page active" id="page-1">
-    <div class="page-indicator">Page 1 of 6 — Introduction &amp; Case Study</div>
+    <div class="page-indicator">Page 1 of 2 — Introduction &amp; Case Study</div>
 
     <!-- Welcome -->
     <div class="card">
@@ -325,7 +340,7 @@
 </div>
 
 <script>
-const TOTAL_PAGES = 6;
+const TOTAL_PAGES = 2;
 const answers = {};
 let adminPinValue = '';
 
@@ -349,7 +364,7 @@ const scenarios = [
     formula:"[10,000 + (1,350×3)] ÷ [1,350 × 0.0584 × 0.220] = 14,050 ÷ 17.35"
   },
   {
-    prev:"10%", num:2, page:3,
+    prev:"10%", num:2, page:2,
     be_total:1000, be_det:900, be_miss:100,
     eac_u:58, eac_d:53, eac_m:6,
     d_u:34, d_d:19, d_m:3, d_s:22, averted:12,
@@ -360,7 +375,7 @@ const scenarios = [
     formula:"[10,000 + (900×3)] ÷ [900 × 0.0584 × 0.220] = 12,700 ÷ 11.56"
   },
   {
-    prev:"7%", num:3, page:4,
+    prev:"7%", num:3, page:2,
     be_total:700, be_det:630, be_miss:70,
     eac_u:41, eac_d:37, eac_m:4,
     d_u:24, d_d:13, d_m:2, d_s:16, averted:8,
@@ -371,7 +386,7 @@ const scenarios = [
     formula:"[10,000 + (630×3)] ÷ [630 × 0.0584 × 0.220] = 11,890 ÷ 8.10"
   },
   {
-    prev:"5%", num:4, page:5,
+    prev:"5%", num:4, page:2,
     be_total:500, be_det:450, be_miss:50,
     eac_u:29, eac_d:26, eac_m:3,
     d_u:17, d_d:9, d_m:2, d_s:11, averted:6,
@@ -382,7 +397,7 @@ const scenarios = [
     formula:"[10,000 + (450×3)] ÷ [450 × 0.0584 × 0.220] = 11,350 ÷ 5.78"
   },
   {
-    prev:"2%", num:5, page:6,
+    prev:"2%", num:5, page:2,
     be_total:200, be_det:180, be_miss:20,
     eac_u:12, eac_d:11, eac_m:1,
     d_u:7, d_d:4, d_m:1, d_s:5, averted:2,
@@ -393,6 +408,168 @@ const scenarios = [
     formula:"[10,000 + (180×3)] ÷ [180 × 0.0584 × 0.220] = 10,540 ÷ 2.31"
   }
 ];
+
+// ── CUSTOM SCENARIO CALCULATOR ───────────────────────────────────────────────
+const PROG_10YR    = 0.0584;   // 1 - 0.994^10
+const MORT_SCRN    = 0.358;
+const MORT_UNSCRN  = 0.578;
+const DETECT       = 0.90;
+const N            = 10000;
+
+function calcCustom(prevPct) {
+  const prev     = prevPct / 100;
+  const be       = N * prev;
+  const be_det   = be * DETECT;
+  const be_miss  = be * (1 - DETECT);
+  const no_be_m  = (N - be) + be_miss;
+
+  const eac_u    = be     * PROG_10YR;
+  const eac_d    = be_det * PROG_10YR;
+  const eac_m    = be_miss* PROG_10YR;
+
+  const d_u      = eac_u  * MORT_UNSCRN;
+  const d_d      = eac_d  * MORT_SCRN;
+  const d_m      = eac_m  * MORT_UNSCRN;
+  const d_s      = d_d + d_m;
+  const averted  = d_u - d_s;
+
+  const egds_det  = be_det * 4;
+  const egds_non  = no_be_m * 1;
+  const egds_tot  = egds_det + egds_non;
+  const egds_pd   = averted > 0 ? egds_tot / averted : 0;
+
+  const r = v => Math.round(v);
+  const f1 = v => v.toLocaleString(undefined, {maximumFractionDigits:1});
+  const comma = v => Math.round(v).toLocaleString();
+
+  return {
+    prev: prevPct,
+    be_total: r(be), be_det: r(be_det), be_miss: r(be_miss),
+    eac_u: r(eac_u), eac_d: r(eac_d), eac_m: r(eac_m),
+    d_u: r(d_u), d_d: r(d_d), d_m: r(d_m), d_s: r(d_s), averted: r(averted),
+    egds_det: r(egds_det), egds_non: r(no_be_m), egds_total: comma(egds_tot),
+    egds_pd: r(egds_pd).toLocaleString(),
+    // calc strings
+    calc_eac_u: `${comma(be)} × 0.0584 = ${f1(eac_u)}`,
+    calc_eac_d: `${comma(be_det)} × 0.0584 = ${f1(eac_d)}`,
+    calc_eac_m: `${comma(be_miss)} × 0.0584 = ${f1(eac_m)}`,
+    calc_d_u:   `${f1(eac_u)} × 0.578 = ${f1(d_u)}`,
+    calc_d_d:   `${f1(eac_d)} × 0.358 = ${f1(d_d)}`,
+    calc_d_m:   `${f1(eac_m)} × 0.578 = ${f1(d_m)}`,
+    calc_av:    `${f1(d_u)} − ${f1(d_s)} = ${f1(averted)}`,
+    formula:    `[10,000 + (${comma(r(be_det))}×3)] ÷ [${comma(r(be_det))} × 0.0584 × 0.220] = ${comma(r(egds_tot))} ÷ ${f1(averted)}`
+  };
+}
+
+function updateCustomScenario(rawVal) {
+  const prevPct = parseFloat(rawVal);
+  const body    = document.getElementById('custom-scenario-body');
+  if (!rawVal || isNaN(prevPct) || prevPct <= 0 || prevPct > 50) {
+    body.innerHTML = '<div class="custom-not-entered">Enter a valid prevalence (0.1–50%) to see the outcome table.</div>';
+    answers.scenario6     = '';
+    answers.scenario6prev = '';
+    return;
+  }
+
+  const s = calcCustom(prevPct);
+  const choices = [
+    { val:"1", label:"No screening — nearly always", cls:"no-screen-strong" },
+    { val:"2", label:"No screening — consider",      cls:"no-screen-consider" },
+    { val:"3", label:"Offer screening — consider",   cls:"screen-consider" },
+    { val:"4", label:"Offer screening — nearly always", cls:"screen-strong" }
+  ];
+
+  // Preserve existing answer if prevalence changes
+  const existingAns = answers.scenario6 || '';
+
+  body.innerHTML = `
+    <button class="calc-toggle-btn" onclick="toggleCalcs(this)" title="Show or hide calculation details">
+      <span class="arrow" style="display:inline-block;transform:rotate(-90deg)">&#9660;</span> Show calculations
+    </button>
+    <div class="table-container calcs-hidden">
+    <table class="outcomes-table">
+      <thead><tr>
+        <th style="width:22%"></th>
+        <th class="col-control" style="width:39%">Without screening (no endoscopy)</th>
+        <th class="col-intervention" style="width:39%">With screening (EGD offered)</th>
+      </tr></thead>
+      <tbody>
+        <tr class="section-divider"><td colspan="3">Level 1 — Barrett's detection</td></tr>
+        <tr>
+          <td class="col-label">Barrett's esophagus present</td>
+          <td class="col-control">${s.be_total.toLocaleString()} have Barrett's — all remain undetected throughout follow-up</td>
+          <td class="col-intervention">${s.be_total.toLocaleString()} have Barrett's · <b>${s.be_det.toLocaleString()} detected</b> (90%) → enter surveillance · <b>${s.be_miss.toLocaleString()} missed</b> (10%) → no surveillance benefit</td>
+        </tr>
+        <tr class="calc-row">
+          <td class="col-label">calculation</td>
+          <td>10,000 × ${prevPct}% = ${s.be_total.toLocaleString()}</td>
+          <td>${s.be_total.toLocaleString()} × 0.90 = ${s.be_det.toLocaleString()} · ${s.be_total.toLocaleString()} × 0.10 = ${s.be_miss.toLocaleString()}</td>
+        </tr>
+        <tr class="section-divider"><td colspan="3">Level 2 — patient outcomes over 10 years</td></tr>
+        <tr>
+          <td class="col-label">Progress to esophageal cancer (EAC)</td>
+          <td class="col-control">${s.eac_u} develop EAC</td>
+          <td class="col-intervention">${s.eac_d} EAC from detected Barrett's · ${s.eac_m} EAC from missed Barrett's</td>
+        </tr>
+        <tr class="calc-row">
+          <td class="col-label">calculation</td>
+          <td>${s.calc_eac_u}</td>
+          <td>${s.calc_eac_d} · ${s.calc_eac_m}</td>
+        </tr>
+        <tr class="egds-row">
+          <td class="col-label">Deaths from esophageal cancer</td>
+          <td class="col-control">${s.d_u} die from EAC over 10 years</td>
+          <td class="col-intervention">${s.d_d} die from detected arm · ${s.d_m} die from missed arm · <b>${s.d_s} total deaths</b> in screened arm</td>
+        </tr>
+        <tr class="calc-row">
+          <td class="col-label">calculation</td>
+          <td>${s.calc_d_u}</td>
+          <td>${s.calc_d_d} · ${s.calc_d_m} · total = ${s.d_d + s.d_m}</td>
+        </tr>
+        <tr class="egds-row">
+          <td class="col-label">Deaths averted by screening</td>
+          <td class="col-control">—</td>
+          <td class="col-intervention"><b>${s.averted} deaths averted</b> — mortality benefit of screening at this prevalence (${s.d_u} → ${s.d_s})</td>
+        </tr>
+        <tr class="calc-row">
+          <td class="col-label">calculation</td>
+          <td>—</td>
+          <td>${s.calc_av}</td>
+        </tr>
+        <tr class="egds-row">
+          <td class="col-label">Total endoscopies — screened arm</td>
+          <td class="col-control">Not counted</td>
+          <td class="col-intervention"><b>${s.egds_total} endoscopies</b> over 10 years</td>
+        </tr>
+        <tr class="calc-row">
+          <td class="col-label">calculation</td>
+          <td>—</td>
+          <td>(${s.be_det.toLocaleString()} × 4) + (${s.egds_non.toLocaleString()} × 1) = ${s.egds_det.toLocaleString()} + ${s.egds_non.toLocaleString()}</td>
+        </tr>
+        <tr class="egds-row">
+          <td class="col-label">EGDs per death averted</td>
+          <td>—</td>
+          <td><span class="egds-result">${s.egds_pd} EGDs per death averted</span></td>
+        </tr>
+        <tr class="calc-row">
+          <td class="col-label">calculation</td>
+          <td>—</td>
+          <td>${s.formula}</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="question-prompt" style="margin-top:16px">In this scenario, you select:</div>
+    <div class="answer-options" id="opts-6">
+      ${choices.map(c => `
+        <label class="answer-opt ${c.cls} ${existingAns===c.val?'selected':''}" id="opt-6-${c.val}"
+               onclick="selectAnswer(6,'${c.val}',this)">
+          <input type="radio" name="q6" value="${c.val}" ${existingAns===c.val?'checked':''}> ${c.label}
+        </label>`).join('')}
+    </div>`;
+
+  answers.scenario6prev = prevPct + '%';
+}
 
 // ── CALC TOGGLE ───────────────────────────────────────────────────────────────
 function toggleCalcs(btn) {
@@ -417,13 +594,19 @@ function buildScenarioPages() {
     { val:"4", label:"Offer screening — nearly always", cls:"screen-strong" }
   ];
 
+  // All scenarios on a single page (page 2)
+  const page = document.createElement('div');
+  page.className = 'page';
+  page.id = 'page-2';
+
+  const indicator = document.createElement('div');
+  indicator.className = 'page-indicator';
+  indicator.textContent = 'Page 2 of 2 — Scenarios';
+  page.appendChild(indicator);
+
   scenarios.forEach(s => {
-    const isLast = s.page === TOTAL_PAGES;
-    const div = document.createElement('div');
-    div.className = 'page';
-    div.id = `page-${s.page}`;
-    div.innerHTML = `
-      <div class="page-indicator">Page ${s.page} of ${TOTAL_PAGES}</div>
+    const card = document.createElement('div');
+    card.innerHTML = `
       <div class="card">
         <div class="scenario-label">Scenario ${s.num} — out of 10,000 people like Mr. Thompson over 10 years</div>
         <div class="scenario-prev">Barrett's esophagus prevalence: <b>${s.prev}</b></div>
@@ -512,21 +695,50 @@ function buildScenarioPages() {
             </label>`).join('')}
         </div>
         <div class="unanswered-warning" id="warn-s${s.num}">Please select an answer to continue.</div>
-        ${isLast ? `
-          <br>
-          <div class="form-group">
-            <label class="form-label" for="q_comments">Comments or suggestions (optional):</label>
-            <textarea id="q_comments" placeholder="Your comments here..."></textarea>
-          </div>` : ''}
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-secondary" onclick="prevPage(${s.page})">&larr; Back</button>
-        <button class="btn btn-primary" id="btn-next-${s.page}" onclick="nextPage(${s.page})">
-          ${isLast ? 'Submit survey ✓' : 'Next scenario &rarr;'}
-        </button>
       </div>`;
-    container.appendChild(div);
+    page.appendChild(card);
   });
+
+  // Custom prevalence scenario card
+  const customCard = document.createElement('div');
+  customCard.innerHTML = `
+    <div class="card custom-scenario-card">
+      <div class="card-title">Scenario 6 — Custom prevalence (optional)</div>
+      <p style="font-size:13px;color:#555;margin-bottom:16px">
+        Enter any Barrett's esophagus prevalence below and all outcome numbers will update automatically.
+        Answer the question if you wish to include this scenario in your submission.
+      </p>
+      <div class="custom-prev-row">
+        <label for="custom-prev-input">Barrett's esophagus prevalence:</label>
+        <div class="prev-input-wrap">
+          <input type="number" id="custom-prev-input" min="0.1" max="50" step="0.1"
+                 placeholder="e.g. 3"
+                 oninput="updateCustomScenario(this.value)">
+          <span class="pct-symbol">%</span>
+        </div>
+        <span class="prev-range-hint">Enter a value between 0.1% and 50%</span>
+      </div>
+      <div id="custom-scenario-body">
+        <div class="custom-not-entered">Enter a prevalence above to see the outcome table.</div>
+      </div>
+    </div>`;
+  page.appendChild(customCard);
+
+  // Comments + submit button at the bottom of the single scenarios page
+  const footer = document.createElement('div');
+  footer.innerHTML = `
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label" for="q_comments">Comments or suggestions (optional):</label>
+        <textarea id="q_comments" placeholder="Your comments here..."></textarea>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevPage(2)">&larr; Back</button>
+      <button class="btn btn-primary" onclick="nextPage(2)">Submit survey ✓</button>
+    </div>`;
+  page.appendChild(footer);
+  container.appendChild(page);
 }
 
 // ── ANSWER SELECTION ──────────────────────────────────────────────────────────
@@ -541,10 +753,20 @@ function selectAnswer(num, val, el) {
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
 function nextPage(current) {
 
-  if (current >= 2) {
-    const sNum = current - 1;
-    if (!answers[`scenario${sNum}`]) {
-      document.getElementById(`warn-s${sNum}`).style.display = 'block'; return;
+  if (current === 2) {
+    // Validate all 5 scenarios before submitting
+    let allAnswered = true;
+    scenarios.forEach(s => {
+      if (!answers[`scenario${s.num}`]) {
+        document.getElementById(`warn-s${s.num}`).style.display = 'block';
+        allAnswered = false;
+      }
+    });
+    if (!allAnswered) {
+      // Scroll to first unanswered warning
+      const first = document.querySelector('.unanswered-warning[style*="block"]');
+      if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
     }
   }
   document.getElementById(`page-${current}`).classList.remove('active');
@@ -584,6 +806,9 @@ async function submitSurvey() {
     scenario3_label: (labelMap[answers.scenario3]||{text:''}).text,
     scenario4_label: (labelMap[answers.scenario4]||{text:''}).text,
     scenario5_label: (labelMap[answers.scenario5]||{text:''}).text,
+    scenario6_prev:  answers.scenario6prev || '',
+    scenario6_val:   answers.scenario6  || '',
+    scenario6_label: (labelMap[answers.scenario6]||{text:''}).text,
     comments:        (document.getElementById('q_comments')||{}).value || ''
   };
 
@@ -598,6 +823,14 @@ async function submitSurvey() {
       <span class="response-value"><span class="response-badge ${info.badge}">${info.text}</span></span>
     </div>`;
   });
+  if (answers.scenario6prev) {
+    const val6 = answers.scenario6;
+    const info6 = labelMap[val6]||{text:'Not answered',badge:''};
+    html+=`<div class="response-row">
+      <span class="response-label">Scenario 6 (${answers.scenario6prev} — custom)</span>
+      <span class="response-value"><span class="response-badge ${info6.badge}">${info6.text}</span></span>
+    </div>`;
+  }
   document.getElementById('responseSummary').innerHTML = html;
   document.getElementById('page-complete').classList.add('active');
   window.scrollTo(0,0);
@@ -674,7 +907,7 @@ async function loadResponseTable(pin) {
 
   document.getElementById('respHead').innerHTML = `<tr>
     <th>#</th><th>Time</th>
-    <th>S1 (15%)</th><th>S2 (10%)</th><th>S3 (7%)</th><th>S4 (5%)</th><th>S5 (2%)</th><th>Comments</th>
+    <th>S1 (15%)</th><th>S2 (10%)</th><th>S3 (7%)</th><th>S4 (5%)</th><th>S5 (2%)</th><th>S6 (custom)</th><th>S6 prev</th><th>Comments</th>
   </tr>`;
 
   if (all.length === 0) {
@@ -693,6 +926,8 @@ async function loadResponseTable(pin) {
       <td>${pill(r.scenario3_val)}</td>
       <td>${pill(r.scenario4_val)}</td>
       <td>${pill(r.scenario5_val)}</td>
+      <td>${pill(r.scenario6_val)}</td>
+      <td style="font-size:11px">${r.scenario6_prev||'—'}</td>
       <td style="max-width:180px;font-size:11px">${r.comments||''}</td>
     </tr>`;
   }).join('');

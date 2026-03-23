@@ -84,6 +84,7 @@ function buildCSV(responses) {
     'Response_ID','Timestamp','Medical_Provider','Specialty','Via_Social_Media',
     'Scenario1_15pct_Code','Scenario2_10pct_Code','Scenario3_7pct_Code','Scenario4_5pct_Code','Scenario5_2pct_Code',
     'Scenario1_15pct_Label','Scenario2_10pct_Label','Scenario3_7pct_Label','Scenario4_5pct_Label','Scenario5_2pct_Label',
+    'Scenario6_Custom_Prev','Scenario6_Custom_Code','Scenario6_Custom_Label',
     'Comments'
   ];
   const esc = v => `"${String(v||'').replace(/"/g,'""')}"`;
@@ -91,6 +92,7 @@ function buildCSV(responses) {
     esc(r.id), esc(r.timestamp), esc(r.role), esc(r.specialty), esc(r.via_social),
     r.scenario1_val||'', r.scenario2_val||'', r.scenario3_val||'', r.scenario4_val||'', r.scenario5_val||'',
     esc(r.scenario1_label), esc(r.scenario2_label), esc(r.scenario3_label), esc(r.scenario4_label), esc(r.scenario5_label),
+    esc(r.scenario6_prev), r.scenario6_val||'', esc(r.scenario6_label),
     esc(r.comments)
   ].join(','));
   return [headers.join(','), ...rows].join('\r\n');
@@ -135,6 +137,9 @@ const server = http.createServer(async (req, res) => {
         scenario3_label: body.scenario3_label || '',
         scenario4_label: body.scenario4_label || '',
         scenario5_label: body.scenario5_label || '',
+        scenario6_prev:  body.scenario6_prev  || '',
+        scenario6_val:   body.scenario6_val   || '',
+        scenario6_label: body.scenario6_label || '',
         comments:        body.comments        || '',
         ip_hash:         crypto.createHash('sha256')
                            .update(req.socket.remoteAddress || '')
@@ -187,11 +192,11 @@ const server = http.createServer(async (req, res) => {
       medical_providers: all.filter(r=>r.role==='Yes').length,
       complete: all.filter(r=>r.scenario1_val&&r.scenario2_val&&r.scenario3_val&&r.scenario4_val).length,
       specialties: {},
-      scenario_breakdown: { s1:{}, s2:{}, s3:{}, s4:{}, s5:{} }
+      scenario_breakdown: { s1:{}, s2:{}, s3:{}, s4:{}, s5:{}, s6:{} }
     };
     all.forEach(r => {
       stats.specialties[r.specialty] = (stats.specialties[r.specialty]||0)+1;
-      ['1','2','3','4','5'].forEach(n => {
+      ['1','2','3','4','5','6'].forEach(n => {
         const v = r[`scenario${n}_val`];
         if (v) stats.scenario_breakdown[`s${n}`][v] = (stats.scenario_breakdown[`s${n}`][v]||0)+1;
       });
