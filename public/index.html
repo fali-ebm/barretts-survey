@@ -233,42 +233,6 @@
       </div>
     </div>
 
-    <!-- About you -->
-    <div class="card">
-      <div class="card-title">About you</div>
-      <div class="form-group">
-        <label class="form-label" for="q_role">Are you a medical provider? <span class="required">*</span></label>
-        <select id="q_role">
-          <option value="">— Select —</option>
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-        <div class="unanswered-warning" id="warn-role">Please select an option.</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="q_specialty">What is your primary specialty or role? <span class="required">*</span></label>
-        <select id="q_specialty">
-          <option value="">— Select —</option>
-          <option value="Gastroenterology">Gastroenterology</option>
-          <option value="General internal medicine / primary care">General internal medicine / primary care</option>
-          <option value="Surgery">Surgery</option>
-          <option value="Oncology">Oncology</option>
-          <option value="Pathology">Pathology</option>
-          <option value="Epidemiology / public health">Epidemiology / public health</option>
-          <option value="Patient / patient advocate">Patient / patient advocate</option>
-          <option value="Other">Other</option>
-        </select>
-        <div class="unanswered-warning" id="warn-specialty">Please select an option.</div>
-      </div>
-      <div class="form-group">
-        <label class="form-label" for="q_twitter">Are you taking this survey through a shared link or social media?</label>
-        <select id="q_twitter">
-          <option value="">— Select —</option>
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-      </div>
-    </div>
 
     <!-- Case study -->
     <div class="card">
@@ -576,12 +540,7 @@ function selectAnswer(num, val, el) {
 
 // ── NAVIGATION ────────────────────────────────────────────────────────────────
 function nextPage(current) {
-  if (current === 1) {
-    let ok = true;
-    if (!document.getElementById('q_role').value)     { document.getElementById('warn-role').style.display='block'; ok=false; }
-    if (!document.getElementById('q_specialty').value){ document.getElementById('warn-specialty').style.display='block'; ok=false; }
-    if (!ok) return;
-  }
+
   if (current >= 2) {
     const sNum = current - 1;
     if (!answers[`scenario${sNum}`]) {
@@ -614,9 +573,7 @@ async function submitSurvey() {
   updateProgress(TOTAL_PAGES+1);
 
   const payload = {
-    role:            document.getElementById('q_role').value,
-    specialty:       document.getElementById('q_specialty').value,
-    via_social:      document.getElementById('q_twitter').value || '',
+    via_social:      '',
     scenario1_val:   answers.scenario1 || '',
     scenario2_val:   answers.scenario2 || '',
     scenario3_val:   answers.scenario3 || '',
@@ -632,8 +589,7 @@ async function submitSurvey() {
 
   // Build summary (show before API call completes)
   let html = `<h3>Your responses</h3>
-    <div class="response-row"><span class="response-label">Role</span><span class="response-value">${payload.role}</span></div>
-    <div class="response-row"><span class="response-label">Specialty</span><span class="response-value">${payload.specialty}</span></div>`;
+`;
   scenarios.forEach(s=>{
     const val = answers[`scenario${s.num}`];
     const info = labelMap[val]||{text:'—',badge:''};
@@ -717,7 +673,7 @@ async function loadResponseTable(pin) {
   const all  = data.responses || [];
 
   document.getElementById('respHead').innerHTML = `<tr>
-    <th>#</th><th>Time</th><th>Role</th><th>Specialty</th>
+    <th>#</th><th>Time</th>
     <th>S1 (15%)</th><th>S2 (10%)</th><th>S3 (7%)</th><th>S4 (5%)</th><th>S5 (2%)</th><th>Comments</th>
   </tr>`;
 
@@ -732,8 +688,6 @@ async function loadResponseTable(pin) {
     return `<tr>
       <td>${i+1}</td>
       <td style="white-space:nowrap;font-size:11px">${ts}</td>
-      <td>${r.role||'—'}</td>
-      <td style="font-size:11px">${r.specialty||'—'}</td>
       <td>${pill(r.scenario1_val)}</td>
       <td>${pill(r.scenario2_val)}</td>
       <td>${pill(r.scenario3_val)}</td>
